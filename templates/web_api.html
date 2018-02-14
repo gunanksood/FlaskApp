@@ -1,0 +1,48 @@
+<body>
+<div>
+		<h2>Audio record and playback</h2>
+		<p>
+			<button id=startRecord>start</button>
+			<button id=stopRecord disabled>stop</button>
+		</p>	
+		<p>
+			<audio id=recordedAudio></audio>
+			<a id=audioDownload></a>
+		</p>
+</div>
+</body>
+
+	<!-- <script type="text/javascript" src="{{ url_for('static', filename='js/audiodisplay.js') }}"></script>
+	<script type="text/javascript" src="{{ url_for('static', filename='js/recorder.js') }}"></script>
+	<script type="text/javascript" src="{{ url_for('static', filename='js/main.js') }}"></script> -->
+<script>
+	navigator.mediaDevices.getUserMedia({audio:true})
+    .then(stream => {
+        rec = new MediaRecorder(stream);
+        rec.ondataavailable = e => {
+            audioChunks.push(e.data);
+            if (rec.state == "inactive"){
+        let blob = new Blob(audioChunks,{type:'audio/x-mpeg-3'});
+        recordedAudio.src = URL.createObjectURL(blob);
+        recordedAudio.controls=true;
+        recordedAudio.autoplay=true;
+        audioDownload.href = recordedAudio.src;
+        audioDownload.download = 'mp3';
+        audioDownload.innerHTML = 'download';
+     }
+        }
+    })
+    .catch(e=>console.log(e));
+  
+startRecord.onclick = e => {
+  startRecord.disabled = true;
+  stopRecord.disabled=false;
+  audioChunks = [];
+  rec.start();
+}
+stopRecord.onclick = e => {
+  startRecord.disabled = false;
+  stopRecord.disabled=true;
+  rec.stop();
+}
+</script>
